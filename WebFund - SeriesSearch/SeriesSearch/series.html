@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <title>Document</title>
+</head>
+
+<body>
+    <div class="cotainer">
+        <div id="idmain">
+            <h1 class="title">Series Search</h1>
+            <div id="search">
+                <input id="text" type="text">
+                <button id="buttsearch" type="submit">Search</button>
+            </div>
+        </div>
+        <div class="info">
+
+        </div>
+    </div>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            var num = 1;
+            function getData() {
+                var search = $("#text").val();
+                $.get(`http://api.tvmaze.com/search/shows?q=${search}`, function (res) {
+                    $(`.info`).html("");
+                    num = 1;
+                    console.log(res);
+                    for (let i = 0; i < res.length-1; i++) {
+
+                        $(`.info`).append(`<div class="imovie"><div id="left${num}" class="left"></div><div id="midl${num}" class="midl"><h1 id="name${num}"></h1><p>Rating <span id="rating${num}"></span> <img src="images/Star.PNG" alt="star-icon" id="icon"></p><p id="premiered${num}">Premiered: </p><p id="status${num}">Status: </p><div id="box${num}" class="genres"></div></div><div id="right"><h1>Summary:</h1><p id="summary${num}" class="summary"></p></div></div>`);
+                        
+                        if (res[i].show.image != null) {
+                            $(`#left${num}`).append("<img id='image' src='" + res[i].show.image.original + "'>");
+                        }
+                        
+                        $(`#name${num}`).append(res[i].show.name);
+                        $(`#premiered${num}`).append(res[i].show.premiered);
+                        $(`#rating${num}`).append(res[i].show.rating.average);
+                        $(`#summary${num}`).append(res[i].show.summary);
+                        $(`#status${num}`).append(res[i].show.status);
+                        var genres = res[i].show.genres;
+                        for (let j = 0; j < genres.length; j++) {
+                            $(`#box${num}`).append('<a href="#" class="box">' + genres[j] + '</a>');
+                        }
+                        num++;
+                    }
+
+                }, "json");
+            }
+
+            $("button").click(function () {
+                
+                getData();
+            });
+
+            $('#text').keypress(function (e) {
+                if (e.which == 13) {
+                    getData();
+                }
+            });
+
+
+        });
+    </script>
+
+
+</body>
+
+</html>
